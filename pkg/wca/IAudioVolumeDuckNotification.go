@@ -1,7 +1,7 @@
 package wca
 
 type IAudioVolumeDuckNotification struct {
-	VTable *IAudioSessionEventsVtbl
+	VTable *IAudioVolumeDuckNotificationVtbl
 }
 
 type IAudioVolumeDuckNotificationVtbl struct {
