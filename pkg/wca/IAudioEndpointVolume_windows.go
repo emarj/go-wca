@@ -10,12 +10,30 @@ import (
 	"github.com/go-ole/go-ole"
 )
 
-func aevRegisterControlChangeNotify() (err error) {
-	return ole.NewError(ole.E_NOTIMPL)
+func aevRegisterControlChangeNotify(aev *IAudioEndpointVolume, callback *IAudioEndpointVolumeCallback) (err error) {
+	hr, _, _ := syscall.Syscall(
+		aev.VTable().RegisterControlChangeNotify,
+		2,
+		uintptr(unsafe.Pointer(aev)),
+		uintptr(unsafe.Pointer(callback)),
+		0)
+	if hr != 0 {
+		err = ole.NewError(hr)
+	}
+	return
 }
 
-func aevUnregisterControlChangeNotify() (err error) {
-	return ole.NewError(ole.E_NOTIMPL)
+func aevUnregisterControlChangeNotify(aev *IAudioEndpointVolume, callback *IAudioEndpointVolumeCallback) (err error) {
+	hr, _, _ := syscall.Syscall(
+		aev.VTable().UnregisterControlChangeNotify,
+		2,
+		uintptr(unsafe.Pointer(aev)),
+		uintptr(unsafe.Pointer(callback)),
+		0)
+	if hr != 0 {
+		err = ole.NewError(hr)
+	}
+	return
 }
 
 func aevGetChannelCount(aev *IAudioEndpointVolume, channelCount *uint32) (err error) {
