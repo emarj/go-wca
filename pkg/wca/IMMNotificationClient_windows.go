@@ -95,7 +95,7 @@ func mmncOnDeviceRemoved(this uintptr, pwstrDeviceId uintptr) int64 {
 	return ole.S_OK
 }
 
-func mmncOnDeviceStateChanged(this uintptr, pwstrDeviceId uintptr, dwNewState uintptr) int64 {
+func mmncOnDeviceStateChanged(this uintptr, pwstrDeviceId uintptr, dwNewState uint32) int64 {
 	mmnc := (*IMMNotificationClient)(unsafe.Pointer(this))
 
 	if mmnc.callback.OnDeviceStateChanged == nil {
@@ -105,7 +105,7 @@ func mmncOnDeviceStateChanged(this uintptr, pwstrDeviceId uintptr, dwNewState ui
 	// device := syscall.UTF16ToString(*(*[]uint16)(unsafe.Pointer(pwstrDeviceId)))
 	device := LPCWSTRToString(pwstrDeviceId, 1024)
 
-	err := mmnc.callback.OnDeviceStateChanged(device, 0)
+	err := mmnc.callback.OnDeviceStateChanged(device, dwNewState)
 
 	if err != nil {
 		return ole.E_FAIL
