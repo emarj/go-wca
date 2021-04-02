@@ -4,6 +4,16 @@ import (
 	"github.com/go-ole/go-ole"
 )
 
+type IMMNotificationClientVtbl struct {
+	ole.IUnknownVtbl
+
+	OnDeviceStateChanged   uintptr
+	OnDeviceAdded          uintptr
+	OnDeviceRemoved        uintptr
+	OnDefaultDeviceChanged uintptr
+	OnPropertyValueChanged uintptr
+}
+
 type IMMNotificationClientCallback struct {
 	OnDefaultDeviceChanged func(flow EDataFlow, role ERole, pwstrDeviceId string) error
 	OnDeviceAdded          func(pwstrDeviceId string) error
@@ -16,14 +26,4 @@ type IMMNotificationClient struct {
 	vTable   *IMMNotificationClientVtbl
 	refCount int
 	callback IMMNotificationClientCallback
-}
-
-type IMMNotificationClientVtbl struct {
-	ole.IUnknownVtbl
-
-	OnDeviceStateChanged   uintptr
-	OnDeviceAdded          uintptr
-	OnDeviceRemoved        uintptr
-	OnDefaultDeviceChanged uintptr
-	OnPropertyValueChanged uintptr
 }

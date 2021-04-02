@@ -9,6 +9,29 @@ import (
 	"github.com/go-ole/go-ole"
 )
 
+func NewIMMNotificationClient(callback IMMNotificationClientCallback) *IMMNotificationClient {
+	vTable := &IMMNotificationClientVtbl{}
+
+	// IUnknown methods
+	vTable.QueryInterface = syscall.NewCallback(mmncQueryInterface)
+	vTable.AddRef = syscall.NewCallback(mmncAddRef)
+	vTable.Release = syscall.NewCallback(mmncRelease)
+
+	// IMMNotificationClient methods
+	vTable.OnDeviceStateChanged = syscall.NewCallback(mmncOnDeviceStateChanged)
+	vTable.OnDeviceAdded = syscall.NewCallback(mmncOnDeviceAdded)
+	vTable.OnDeviceRemoved = syscall.NewCallback(mmncOnDeviceRemoved)
+	vTable.OnDefaultDeviceChanged = syscall.NewCallback(mmncOnDefaultDeviceChanged)
+	vTable.OnPropertyValueChanged = syscall.NewCallback(mmncOnPropertyValueChanged)
+
+	mmnc := &IMMNotificationClient{}
+
+	mmnc.vTable = vTable
+	mmnc.callback = callback
+
+	return mmnc
+}
+
 func mmncQueryInterface(this uintptr, riid *ole.GUID, ppInterface *uintptr) int64 {
 	*ppInterface = 0
 
@@ -151,27 +174,4 @@ func LPCWSTRToString(lpcwstr uintptr, maxChars int) string {
 	}
 
 	return syscall.UTF16ToString(us)
-}
-
-func NewIMMNotificationClient(callback IMMNotificationClientCallback) *IMMNotificationClient {
-	vTable := &IMMNotificationClientVtbl{}
-
-	// IUnknown methods
-	vTable.QueryInterface = syscall.NewCallback(mmncQueryInterface)
-	vTable.AddRef = syscall.NewCallback(mmncAddRef)
-	vTable.Release = syscall.NewCallback(mmncRelease)
-
-	// IMMNotificationClient methods
-	vTable.OnDeviceStateChanged = syscall.NewCallback(mmncOnDeviceStateChanged)
-	vTable.OnDeviceAdded = syscall.NewCallback(mmncOnDeviceAdded)
-	vTable.OnDeviceRemoved = syscall.NewCallback(mmncOnDeviceRemoved)
-	vTable.OnDefaultDeviceChanged = syscall.NewCallback(mmncOnDefaultDeviceChanged)
-	vTable.OnPropertyValueChanged = syscall.NewCallback(mmncOnPropertyValueChanged)
-
-	mmnc := &IMMNotificationClient{}
-
-	mmnc.vTable = vTable
-	mmnc.callback = callback
-
-	return mmnc
 }

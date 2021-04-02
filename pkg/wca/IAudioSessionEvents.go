@@ -1,13 +1,16 @@
 package wca
 
+import "github.com/go-ole/go-ole"
+
 type IAudioSessionEvents struct {
-	VTable *IAudioSessionEventsVtbl
+	vTable   *IAudioSessionEventsVtbl
+	refCount int
+	callback IAudioSessionEventsCallback
 }
 
 type IAudioSessionEventsVtbl struct {
-	QueryInterface         uintptr
-	AddRef                 uintptr
-	Release                uintptr
+	ole.IUnknownVtbl
+
 	OnDisplayNameChanged   uintptr
 	OnIconPathChanged      uintptr
 	OnSimpleVolumeChanged  uintptr
@@ -15,4 +18,12 @@ type IAudioSessionEventsVtbl struct {
 	OnGroupingParamChanged uintptr
 	OnStateChanged         uintptr
 	OnSessionDisconnected  uintptr
+}
+
+type IAudioSessionEventsCallback struct {
+	OnDisplayNameChanged  func(newDisplayName string, eventCtx *ole.GUID) error
+	OnIconPathChanged     func(newIconPath string, eventCtx *ole.GUID) error
+	OnSimpleVolumeChanged func(newVolume float32, newMute bool, eventCtx *ole.GUID) error
+	OnStateChanged        func(newState uint32) error
+	OnSessionDisconnected func(reason uint32) error
 }
