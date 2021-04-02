@@ -102,14 +102,16 @@ func aseOnIconPathChanged(this uintptr, newIconPathPtr uintptr, eventCtx *ole.GU
 	return ole.S_OK
 
 }
-func aseOnSimpleVolumeChanged(this uintptr, newVolume float32, newMute bool, eventCtx *ole.GUID) int64 {
+
+//this should be a float but currently is not supported
+func aseOnSimpleVolumeChanged(this uintptr, _ uint32, newMute bool, eventCtx *ole.GUID) int64 {
 	ase := (*IAudioSessionEvents)(unsafe.Pointer(this))
 
 	if ase.callback.OnSimpleVolumeChanged == nil {
 		return ole.S_OK
 	}
-
-	err := ase.callback.OnSimpleVolumeChanged(newVolume, newMute, eventCtx)
+	//this should be a float but currently is not supported
+	err := ase.callback.OnSimpleVolumeChanged(0, newMute, eventCtx)
 
 	if err != nil {
 		return ole.E_FAIL
