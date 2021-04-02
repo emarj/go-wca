@@ -21,10 +21,8 @@ func NewIAudioSessionEvents(callback IAudioSessionEventsCallback) *IAudioSession
 	vTable.OnDisplayNameChanged = syscall.NewCallback(aseOnDisplayNameChanged)
 	vTable.OnIconPathChanged = syscall.NewCallback(aseOnIconPathChanged)
 	vTable.OnSimpleVolumeChanged = syscall.NewCallback(aseOnSimpleVolumeChanged)
-	vTable.OnChannelVolumeChanged = syscall.NewCallback(func() {})
-	vTable.OnGroupingParamChanged = syscall.NewCallback(func() {})
-	//vTable.OnChannelVolumeChanged = syscall.NewCallback(aseOnChannelVolumeChanged)
-	//vTable.OnGroupingParamChanged = syscall.NewCallback(aseOnGroupingParamChanged)
+	vTable.OnChannelVolumeChanged = syscall.NewCallback(aseOnChannelVolumeChanged)
+	vTable.OnGroupingParamChanged = syscall.NewCallback(aseOnGroupingParamChanged)
 	vTable.OnStateChanged = syscall.NewCallback(aseOnStateChanged)
 	vTable.OnSessionDisconnected = syscall.NewCallback(aseOnSessionDisconnected)
 
@@ -121,6 +119,41 @@ func aseOnSimpleVolumeChanged(this uintptr, newVolume float32, newMute bool, eve
 
 }
 
+func aseOnChannelVolumeChanged(this uintptr, channelCount uint32, newChannelVolumeArrayPtr uintptr, changedChannel uint32, eventCtx *ole.GUID) int64 {
+	ase := (*IAudioSessionEvents)(unsafe.Pointer(this))
+
+	if ase.callback.OnChannelVolumeChanged == nil {
+		return ole.S_OK
+	}
+
+	newChannelVolumeArray := pointerToSliceFloat32(newChannelVolumeArrayPtr, channelCount)
+
+	err := ase.callback.OnChannelVolumeChanged(newChannelVolumeArray, changedChannel, eventCtx)
+
+	if err != nil {
+		return ole.E_FAIL
+	}
+
+	return ole.S_OK
+
+}
+
+func aseOnGroupingParamChanged(this uintptr, newGroupingParam *ole.GUID, eventCtx *ole.GUID) int64 {
+	ase := (*IAudioSessionEvents)(unsafe.Pointer(this))
+
+	if ase.callback.OnGroupingParamChanged == nil {
+		return ole.S_OK
+	}
+
+	err := ase.callback.OnGroupingParamChanged(newGroupingParam, eventCtx)
+
+	if err != nil {
+		return ole.E_FAIL
+	}
+
+	return ole.S_OK
+}
+
 func aseOnStateChanged(this uintptr, newState uint32) int64 {
 	ase := (*IAudioSessionEvents)(unsafe.Pointer(this))
 
@@ -152,4 +185,24 @@ func aseOnSessionDisconnected(this uintptr, reason uint32) int64 {
 
 	return ole.S_OK
 
+}
+
+func pointerToSliceFloat32(ptr uintptr, len uint32) []float32 {
+
+	result := []float32{}
+	if ptr == 0 || len == 0 {
+		return result
+	}
+
+	for i := uint32(0); i < len; i++ {
+		u := *(*float32)(unsafe.Pointer(ptr + uintptr(i)))
+
+		if u == 0 {
+			break
+		}
+
+		result = append(result, u)
+	}
+
+	return result
 }
