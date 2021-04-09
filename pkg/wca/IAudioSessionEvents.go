@@ -4,7 +4,7 @@ import "github.com/go-ole/go-ole"
 
 type IAudioSessionEvents struct {
 	vTable   *IAudioSessionEventsVtbl
-	refCount int
+	refCount uint
 	callback IAudioSessionEventsCallback
 }
 

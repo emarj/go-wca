@@ -2,6 +2,12 @@ package wca
 
 import "github.com/go-ole/go-ole"
 
+type IAudioSessionNotification struct {
+	vTable   *IAudioSessionNotificationVtbl
+	refCount uint
+	callback IAudioSessionNotificationCallback
+}
+
 type IAudioSessionNotificationVtbl struct {
 	ole.IUnknownVtbl
 	OnSessionCreated uintptr
@@ -9,10 +15,4 @@ type IAudioSessionNotificationVtbl struct {
 
 type IAudioSessionNotificationCallback struct {
 	OnSessionCreated func(*IAudioSessionControl) error
-}
-
-type IAudioSessionNotification struct {
-	vTable   *IAudioSessionNotificationVtbl
-	refCount int
-	callback IAudioSessionNotificationCallback
 }

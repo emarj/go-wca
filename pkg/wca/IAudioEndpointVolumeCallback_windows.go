@@ -32,7 +32,7 @@ func aevcQueryInterface(this uintptr, riid *ole.GUID, ppInterface *uintptr) int6
 	*ppInterface = 0
 
 	if ole.IsEqualGUID(riid, ole.IID_IUnknown) ||
-		ole.IsEqualGUID(riid, IID_IAudioSessionNotification) {
+		ole.IsEqualGUID(riid, IID_IAudioEndpointVolumeCallback) {
 		aevcAddRef(this)
 		*ppInterface = this
 
@@ -43,7 +43,7 @@ func aevcQueryInterface(this uintptr, riid *ole.GUID, ppInterface *uintptr) int6
 }
 
 func aevcAddRef(this uintptr) int64 {
-	aevc := (*IAudioSessionNotification)(unsafe.Pointer(this))
+	aevc := (*IAudioEndpointVolumeCallback)(unsafe.Pointer(this))
 
 	aevc.refCount += 1
 
@@ -51,7 +51,7 @@ func aevcAddRef(this uintptr) int64 {
 }
 
 func aevcRelease(this uintptr) int64 {
-	aevc := (*IAudioSessionNotification)(unsafe.Pointer(this))
+	aevc := (*IAudioEndpointVolumeCallback)(unsafe.Pointer(this))
 
 	aevc.refCount -= 1
 

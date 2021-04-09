@@ -38,7 +38,7 @@ func aseQueryInterface(this uintptr, riid *ole.GUID, ppInterface *uintptr) int64
 	*ppInterface = 0
 
 	if ole.IsEqualGUID(riid, ole.IID_IUnknown) ||
-		ole.IsEqualGUID(riid, IID_IMMNotificationClient) {
+		ole.IsEqualGUID(riid, IID_IAudioSessionEvents) {
 		aseAddRef(this)
 		*ppInterface = this
 
@@ -49,7 +49,7 @@ func aseQueryInterface(this uintptr, riid *ole.GUID, ppInterface *uintptr) int64
 }
 
 func aseAddRef(this uintptr) int64 {
-	ase := (*IMMNotificationClient)(unsafe.Pointer(this))
+	ase := (*IAudioSessionEvents)(unsafe.Pointer(this))
 
 	ase.refCount += 1
 
@@ -57,7 +57,7 @@ func aseAddRef(this uintptr) int64 {
 }
 
 func aseRelease(this uintptr) int64 {
-	ase := (*IMMNotificationClient)(unsafe.Pointer(this))
+	ase := (*IAudioSessionEvents)(unsafe.Pointer(this))
 
 	ase.refCount -= 1
 

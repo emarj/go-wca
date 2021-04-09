@@ -4,6 +4,12 @@ import (
 	"github.com/go-ole/go-ole"
 )
 
+type IMMNotificationClient struct {
+	vTable   *IMMNotificationClientVtbl
+	refCount uint
+	callback IMMNotificationClientCallback
+}
+
 type IMMNotificationClientVtbl struct {
 	ole.IUnknownVtbl
 
@@ -20,10 +26,4 @@ type IMMNotificationClientCallback struct {
 	OnDeviceRemoved        func(pwstrDeviceId string) error
 	OnDeviceStateChanged   func(pwstrDeviceId string, dwNewState uint32) error
 	OnPropertyValueChanged func(pwstrDeviceId string, key uint64) error
-}
-
-type IMMNotificationClient struct {
-	vTable   *IMMNotificationClientVtbl
-	refCount int
-	callback IMMNotificationClientCallback
 }
