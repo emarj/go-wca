@@ -59,5 +59,14 @@ func mmdeRegisterEndpointNotificationCallback(mmde *IMMDeviceEnumerator, mmnc *I
 }
 
 func mmdeUnregisterEndpointNotificationCallback(mmde *IMMDeviceEnumerator, mmnc *IMMNotificationClient) (err error) {
-	return ole.NewError(ole.E_NOTIMPL)
+	hr, _, _ := syscall.Syscall(
+		mmde.VTable().UnregisterEndpointNotificationCallback,
+		2,
+		uintptr(unsafe.Pointer(mmde)),
+		uintptr(unsafe.Pointer(mmnc)),
+		0)
+	if hr != 0 {
+		err = ole.NewError(hr)
+	}
+	return
 }
