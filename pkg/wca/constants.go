@@ -168,3 +168,12 @@ const (
 	AudioSessionStateActive
 	AudioSessionStateExpired
 )
+
+const (
+	AudioSessionDisconnectReasonDeviceRemoval = iota
+	AudioSessionDisconnectReasonServerShutdown
+	AudioSessionDisconnectReasonFormatChanged
+	AudioSessionDisconnectReasonSessionLogoff
+	AudioSessionDisconnectReasonSessionDisconnected
+	AudioSessionDisconnectReasonExclusiveModeOverride
+)
