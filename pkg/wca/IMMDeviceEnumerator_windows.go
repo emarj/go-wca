@@ -42,7 +42,7 @@ func mmdeGetDefaultAudioEndpoint(mmde *IMMDeviceEnumerator, eDataFlow, stateMask
 }
 
 func mmdeGetDevice(mmde *IMMDeviceEnumerator, deviceID string, mmd **IMMDevice) (err error) {
-	s16, err := syscall.UTF16PtrFromString(deviceID)
+	deviceIDPtr, err := syscall.UTF16PtrFromString(deviceID)
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func mmdeGetDevice(mmde *IMMDeviceEnumerator, deviceID string, mmd **IMMDevice) 
 		mmde.VTable().GetDevice,
 		3,
 		uintptr(unsafe.Pointer(mmde)),
-		uintptr(unsafe.Pointer(s16)),
+		uintptr(unsafe.Pointer(deviceIDPtr)),
 		uintptr(unsafe.Pointer(mmd)),
 	)
 	if hr != 0 {
